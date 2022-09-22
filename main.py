@@ -24,9 +24,65 @@ MENU = {
     }
 }
 
+profit = 0
+
 resources = {
     "water": 300,
     "milk": 200,
     "coffee": 100,
 }
 
+def is_resource_sufficient(order_ingredients):
+    """True jak mozna, False jak nie ma wystarczających zasobów"""
+    for item in order_ingredients:
+        if order_ingredients[item] >= resources[item]:
+            print("nie ma {item}. no i chuj no i cześ")
+            return False
+    return True
+
+def process_coins():
+    """calkowita wartosc monet"""
+    print("Dawaj monety!!!")
+    total = int(input("ile cwiartek?: "))* 0.25
+    total += int(input("ile dimsów?: "))* 0.1
+    total += int(input("ile miedziaków?: "))* 0.05
+    total += int(input("ile fenigów?: "))* 0.01
+    return total
+    
+def is_transaction_successful(money_received, drink_cost):
+    """Daje Treu jasli platność OK, albo False jeśli nie ma hajcu"""
+    if money_received >= drink_cost:
+        change = round(money_received - drink_cost, 2)
+        print(f"Masz tu {change} reszty i na drzewo ;)")
+        global profit
+        profit += drink_cost
+        return True
+    else:
+        print ("Lipa. nie ma sianka :/")
+        return False
+        
+def make_coffee(drink_name, order_ingredients):
+    for item in order_ingredients:
+        resources[item] -= order_ingredients[item]
+    print (f"prosze oto twoje {drink_name}🍆☕")
+
+is_on = True
+
+while is_on:
+    choice = input (" What would you like? (espresso/latte/cappuccino):")
+    if choice == "off":
+        is_on = False
+    elif choice == "report":
+        print(f"Water: {resources['water']} ml") 
+        print(f"Milk: {resources['milk']} ml") 
+        print(f"Coffee: {resources['coffee']}g") 
+        print(f"Money: ${profit}")
+    else:
+        drink = MENU[choice]
+        if is_resource_sufficient(drink["ingredients"]):
+            payment = process_coins()
+            if is_transaction_successful(payment, drink["cost"]):
+                make_coffee(choice, drink["ingredients"])
+            
+            
+ 
